@@ -3,16 +3,15 @@ package com.sample.android.moviebrowser
 import java.util.ArrayList
 import java.util.Collections
 
-import com.sample.android.moviebrowser.adapters.MovieListArrayAdapter
+import com.sample.android.moviebrowser.adapters.MovieListAdapter
 import com.sample.android.moviebrowser.db.DBManager
-import com.sample.android.moviebrowser.models.Movie
-import com.sample.android.moviebrowser.tasks.DownloadMovieListTask
-import com.sample.android.moviebrowser.tasks.ReadDBMovieListTask
+import com.sample.android.moviebrowser.data.models.Movie
 
 import android.os.Bundle
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.ContextMenu
@@ -21,24 +20,22 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView.AdapterContextMenuInfo
-import android.widget.EditText
-import android.widget.ListView
-import android.widget.TextView
+import android.widget.LinearLayout
+import com.sample.android.moviebrowser.data.DataModule
+import com.sample.android.moviebrowser.data.ITunesSearchService
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_movie_list.*
 
-/**
- * @author Carlos Vasconcelos
- */
+
 class MovieListActivity : Activity() {
     private var dbManager: DBManager? = null
 
     private var headerView: View? = null
-    private var listView: ListView? = null
-    private var listAdapter: MovieListArrayAdapter? = null
-    private var movieList: ArrayList<Movie>? = null
+    private var listAdapter: MovieListAdapter? = null
+    private var movieList = ArrayList<Movie>()
 
     private var loadDialog: ProgressDialog? = null
-
-    private var searchBox: EditText? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,17 +43,16 @@ class MovieListActivity : Activity() {
 
         dbManager = DBManager(this)
 
-        headerView = layoutInflater.inflate(R.layout.movie_list_header, null, true)
+        //headerView = layoutInflater.inflate(R.layout.movie_list_header, null, true)
 
         movieList = ArrayList<Movie>()
-        listView = findViewById(R.id.list_view) as ListView
-        listAdapter = MovieListArrayAdapter(this, movieList, dbManager!!)
-        listView!!.addHeaderView(headerView)
-        listView!!.adapter = listAdapter
-        registerForContextMenu(listView)
+        listAdapter = MovieListAdapter(this, movieList)
+        //recyclerView.addHeaderView(headerView)
+        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
+        recyclerView.adapter = listAdapter
+        //registerForContextMenu(listView)
 
-        searchBox = findViewById(R.id.search_box) as EditText
-        searchBox!!.addTextChangedListener(object : TextWatcher {
+        searchBox.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(sequence: CharSequence, arg1: Int, arg2: Int, arg3: Int) {
                 listAdapter!!.filter.filter(sequence)
             }
@@ -73,33 +69,40 @@ class MovieListActivity : Activity() {
     override fun onStart() {
         super.onStart()
 
-        displaySelectionDialog()
+        retrieveMovieList()
+        //displaySelectionDialog()
     }
 
 
     fun displaySelectionDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setMessage(R.string.dialog_load_question)
-                .setPositiveButton(R.string.dialog_load_yes) { dialog, id -> retrieveMovieListFromDB() }
-                .setNegativeButton(R.string.dialog_load_download) { dialog, id -> retrieveMovieList() }
-
-        val dialog = builder.create()
-        dialog.show()
+//        val builder = AlertDialog.Builder(this)
+//        builder.setMessage(R.string.dialog_load_question)
+//                .setPositiveButton(R.string.dialog_load_yes) { dialog, id -> retrieveMovieListFromDB() }
+//                .setNegativeButton(R.string.dialog_load_download) { dialog, id -> retrieveMovieList() }
+//
+//        val dialog = builder.create()
+//        dialog.show()
     }
 
     fun retrieveMovieList() {
         loadDialog = ProgressDialog.show(this, "", resources.getString(R.string.dialog_loading), true, true)
-        listAdapter!!.clear()
-        val fetchTask = DownloadMovieListTask(this, dbManager!!)
-        fetchTask.execute()
+        //listAdapter.clear()
+
+        ITunesSearchService.Factory.create().search("Rock", "movie", "movie", "50")
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    result ->updateMovieList(result.results)
+                })
+
     }
 
-    fun retrieveMovieListFromDB() {
-        loadDialog = ProgressDialog.show(this, "", resources.getString(R.string.dialog_loading), true, true)
-        listAdapter!!.clear()
-        val fetchTask = ReadDBMovieListTask(this, dbManager!!)
-        fetchTask.execute()
-    }
+//    fun retrieveMovieListFromDB() {
+//        loadDialog = ProgressDialog.show(this, "", resources.getString(R.string.dialog_loading), true, true)
+//        listAdapter!!.clear()
+//        val fetchTask = ReadDBMovieListTask(this, dbManager!!)
+//        fetchTask.execute()
+//    }
 
     fun updateMovieList(list: ArrayList<Movie>) {
         movieList = list
@@ -151,9 +154,9 @@ class MovieListActivity : Activity() {
         }
 
         menuInflater.inflate(R.menu.movie_list_context_menu, contextMenu)
-        val movieTitle = (info.targetView.findViewById(R.id.movie_title) as TextView).text.toString()
-        contextMenu.setHeaderTitle(getString(R.string.context_menu_title_delete) + movieTitle +
-                getString(R.string.context_menu_title_delete2))
+//        val movieTitle = (info.targetView.findViewById(R.id.movie_title) as TextView).text.toString()
+//        contextMenu.setHeaderTitle(getString(R.string.context_menu_title_delete) + movieTitle +
+//                getString(R.string.context_menu_title_delete2))
     }
 
 
@@ -175,22 +178,22 @@ class MovieListActivity : Activity() {
     }
 
     fun sortListByArtist() {
-        Collections.sort(movieList!!) { movie0, movie1 -> movie0.artist!!.compareTo(movie1.artist!!) }
+        Collections.sort(movieList!!) { movie0, movie1 -> movie0.artistName!!.compareTo(movie1.artistName!!) }
         listAdapter!!.updateList(movieList!!, searchBox!!.text)
     }
 
     fun sortListByTitle() {
-        Collections.sort(movieList!!) { movie0, movie1 -> movie0.title!!.compareTo(movie1.title!!) }
+        Collections.sort(movieList!!) { movie0, movie1 -> movie0.trackName!!.compareTo(movie1.trackName!!) }
         listAdapter!!.updateList(movieList!!, searchBox!!.text)
     }
 
     fun sortListByPrice() {
         Collections.sort(movieList!!) { movie0, movie1 ->
-            val priceCompare = movie0.price.toDouble().compareTo(movie1.price.toDouble())
+            val priceCompare = movie0.trackPrice.toDouble().compareTo(movie1.trackPrice.toDouble())
             if (priceCompare != 0) {
                 priceCompare
             } else {
-                movie0.title!!.compareTo(movie1.title!!)
+                movie0.trackName!!.compareTo(movie1.trackName!!)
             }
         }
         listAdapter!!.updateList(movieList!!, searchBox!!.text)

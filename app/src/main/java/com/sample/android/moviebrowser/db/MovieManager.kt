@@ -1,10 +1,9 @@
 package com.sample.android.moviebrowser.db
 
-
 import java.io.ByteArrayInputStream
 import java.util.ArrayList
 import com.sample.android.moviebrowser.R
-import com.sample.android.moviebrowser.models.Movie
+import com.sample.android.moviebrowser.data.models.Movie
 
 import android.content.ContentValues
 import android.content.Context
@@ -14,9 +13,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 
 
-/**
- * @author Carlos Vasconcelos
- */
 class MovieManager(private val context: Context, private val dbManager: DBManager) {
 
 
@@ -58,11 +54,11 @@ class MovieManager(private val context: Context, private val dbManager: DBManage
 
             do {
                 val movie = Movie()
-                movie.id = cursor.getLong(idMovieIndex)
-                movie.title = cursor.getString(titleIndex)
-                movie.artist = cursor.getString(artistIndex)
-                movie.price = cursor.getDouble(priceIndex)
-                movie.coverURL = cursor.getString(coverURLIndex)
+                movie.trackId = cursor.getLong(idMovieIndex)
+                movie.trackName = cursor.getString(titleIndex)
+                movie.artistName = cursor.getString(artistIndex)
+                movie.trackPrice = cursor.getDouble(priceIndex)
+                movie.artworkUrl100 = cursor.getString(coverURLIndex)
                 val imageByteArray = cursor.getBlob(coverIndex)
 
                 var image: Bitmap? = null
@@ -71,7 +67,7 @@ class MovieManager(private val context: Context, private val dbManager: DBManage
                     image = BitmapFactory.decodeStream(imageStream)
                     imageStream = null
                 }
-                movie.cover = image
+                //movie.artworkUrl100 = image
 
                 list.add(movie)
             } while (cursor.moveToNext())
@@ -110,11 +106,11 @@ class MovieManager(private val context: Context, private val dbManager: DBManage
     @Synchronized private fun saveMovie(movie: Movie) {
         var db: SQLiteDatabase? = dbManager.writableDatabase ?: return
         val dataToInsert = ContentValues()
-        dataToInsert.put(context.getString(R.string.sql_column_movie_idmovie), movie.id)
-        dataToInsert.put(context.getString(R.string.sql_column_movie_title), movie.title)
-        dataToInsert.put(context.getString(R.string.sql_column_movie_artist), movie.artist)
-        dataToInsert.put(context.getString(R.string.sql_column_movie_price), movie.price)
-        dataToInsert.put(context.getString(R.string.sql_column_movie_coverURL), movie.coverURL)
+        dataToInsert.put(context.getString(R.string.sql_column_movie_idmovie), movie.trackId)
+        dataToInsert.put(context.getString(R.string.sql_column_movie_title), movie.trackName)
+        dataToInsert.put(context.getString(R.string.sql_column_movie_artist), movie.artistName)
+        dataToInsert.put(context.getString(R.string.sql_column_movie_price), movie.trackPrice)
+        dataToInsert.put(context.getString(R.string.sql_column_movie_coverURL), movie.artworkUrl100)
 
         if (!db!!.isOpen) {
             dbManager.openDB(db!!)
@@ -134,7 +130,7 @@ class MovieManager(private val context: Context, private val dbManager: DBManage
         var db: SQLiteDatabase? = dbManager.writableDatabase ?: return
         val dataToInsert = ContentValues()
         dataToInsert.put(context.getString(R.string.sql_column_movie_cover), imageByteArray)
-        val whereValues = arrayOf(movie.id.toString())
+        val whereValues = arrayOf(movie.trackId.toString())
 
         if (!db!!.isOpen) {
             dbManager.openDB(db!!)
