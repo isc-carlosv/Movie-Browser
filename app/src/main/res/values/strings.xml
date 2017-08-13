@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- App Strings -->
+    <string name="app_name">Movie Browser</string>
+
+    
+    <!-- iTunes Service strings -->
+	<string name="service_url">https://itunes.apple.com/search?term=rock&amp;media=movie&amp;entity=movie&amp;limit=50</string>
+    
+    
+    <!-- Dialog Strings -->
+    <string name="dialog_loading">Loading. Please wait&#8230;</string>
+    <string name="dialog_load_question">Do you wish to load the local copy?</string>
+    <string name="dialog_load_yes">Yes</string>
+    <string name="dialog_load_download">Download</string>
+
+    
+    <!-- Menu Strings -->
+    <string name="menu_reload">Reload</string>
+    <string name="menu_sort_artist">Order by artist</string>
+    <string name="menu_sort_title">Order by title</string>
+    <string name="menu_sort_price">Order by price</string>
+    <string name="menu_sort_reverse">Revert current order</string>
+    <string name="context_menu_delete">Remove from list</string>
+    <string name="context_menu_title_delete">Delete&#160;</string>
+    <string name="context_menu_title_delete2">&#160;from movies list?</string>
+     
+    <!-- Activity Strings -->
+    <string name="activity_table_header_cover">Cover</string>
+    <string name="activity_table_header_title">Movie title &amp; artist</string>
+    <string name="activity_table_header_price">Price</string>
+    <string name="activity_table_price_currency">$</string>
+    <string name="activity_search_box_hint">Search</string>
+    
+    
+    
+</resources>
