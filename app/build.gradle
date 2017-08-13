@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 25
@@ -18,7 +20,9 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:23.1.1'
+    compile 'com.android.support:support-v4:25.3.1'
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     // Unit testing dependencies
     testCompile 'junit:junit:4.12'
