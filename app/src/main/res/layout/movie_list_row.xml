@@ -3,12 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="10dp"
-    tools:context=".MovieListActivity" >
+    tools:context=".view.MovieListActivity" >
 
 	<ImageView 
 	    android:id="@+id/artwork"
-	    android:layout_width="60dp"
-	    android:layout_height="60dp"
+	    android:layout_width="80dp"
+	    android:layout_height="100dp"
 		android:layout_alignParentStart="true"
 	    android:layout_centerVertical="true"
 		tools:ignore="contentDescription"/>
@@ -25,20 +25,12 @@
 		android:visibility="gone"/>
 	
 	<TextView 
-	    android:id="@+id/moviePrice"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-	    android:layout_centerVertical="true"
-	    android:layout_marginStart="10dp"/>
-	
-	<TextView 
 	    android:id="@+id/movieName"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
         android:layout_toEndOf="@+id/artwork"
-        android:layout_toStartOf="@+id/moviePrice"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/black"
 	    style="@style/MovieNameFont"/>
 
 	<TextView 
@@ -46,8 +38,17 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
         android:layout_toEndOf="@+id/artwork"
-        android:layout_toStartOf="@+id/moviePrice"
 	    android:layout_below="@+id/movieName"
-        android:layout_marginStart="10dp"/>
+        android:textColor="@color/gray_text"
+        android:layout_marginStart="8dp"/>
+
+	<TextView
+		android:id="@+id/moviePrice"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_toEndOf="@+id/artwork"
+		android:layout_below="@id/movieArtist"
+        android:textColor="@color/gray_text"
+		android:layout_marginStart="8dp"/>
 
 </RelativeLayout>

@@ -1,8 +1,8 @@
-package com.sample.android.moviebrowser.adapters
+package com.sample.android.moviebrowser.view.adapters
 
 import java.util.ArrayList
 
-import com.sample.android.moviebrowser.MovieListActivity
+import com.sample.android.moviebrowser.view.MovieListActivity
 import com.sample.android.moviebrowser.R
 import com.sample.android.moviebrowser.data.models.Movie
 
@@ -19,13 +19,13 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.movie_list_row.view.*
 
 
-class MovieListAdapter(val activity: MovieListActivity, private var moviesList: ArrayList<Movie>)
+class MovieListAdapter(val activity: MovieListActivity, moviesList: ArrayList<Movie>)
     : RecyclerView.Adapter<MovieListAdapter.MovieViewHolder>(), Filterable {
 
     private var filteredMoviesList: ArrayList<Movie>
 
     init {
-        this.filteredMoviesList = moviesList
+        filteredMoviesList = moviesList
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): MovieViewHolder {
@@ -44,7 +44,7 @@ class MovieListAdapter(val activity: MovieListActivity, private var moviesList: 
         fun onBind(movie : Movie){
             itemView.movieName?.text = movie.trackName
             itemView.movieArtist?.text = movie.artistName
-            itemView.moviePrice?.text = itemView.context.getString(R.string.activity_table_price_currency) + movie.trackPrice.toString()
+            itemView.moviePrice?.text = itemView.context.getString(R.string.activity_table_price_currency, movie.trackPrice)
 
             Picasso.with(itemView.context)
                     .load(movie.artworkUrl100)
@@ -59,47 +59,40 @@ class MovieListAdapter(val activity: MovieListActivity, private var moviesList: 
     }
 
     fun updateList(movies: ArrayList<Movie>) {
-        this.moviesList = movies
-        this.filteredMoviesList.clear()
-        this.filteredMoviesList.addAll(movies)
-        this.notifyDataSetChanged()
+        filteredMoviesList.clear()
+        filteredMoviesList.addAll(movies)
+        notifyDataSetChanged()
     }
 
     fun updateList(movies: ArrayList<Movie>, sequence: Editable) {
-        this.moviesList = movies
-        this.filteredMoviesList.clear()
-        this.filteredMoviesList.addAll(movies)
-        this.filter.filter(sequence)
+        filteredMoviesList.clear()
+        filteredMoviesList.addAll(movies)
+        filter.filter(sequence)
     }
 
-    override fun getFilter(): Filter {
+    override fun getFilter(): Filter = object : Filter() {
 
-        val filter = object : Filter() {
-
-            override fun publishResults(constraint: CharSequence, results: Filter.FilterResults) {
-                filteredMoviesList = results.values as ArrayList<Movie>
-                notifyDataSetChanged()
-            }
-
-            @SuppressLint("DefaultLocale")
-            override fun performFiltering(constraint : CharSequence): Filter.FilterResults {
-                val results = Filter.FilterResults()
-
-                val constraint = constraint.toString().toLowerCase()
-                val filteredMovies = moviesList.indices
-                        .map { moviesList[it] }
-                        .filterTo(ArrayList<Movie>()) {
-                            it.artistName!!.toLowerCase().contains(constraint) ||
-                            it.trackName!!.toLowerCase().contains(constraint)
-                        }
-
-                results.count = filteredMovies.size
-                results.values = filteredMovies
-
-                return results
-            }
+        @Suppress("UNCHECKED_CAST")
+        override fun publishResults(constraint: CharSequence, results: Filter.FilterResults) {
+            filteredMoviesList = results.values as ArrayList<Movie>
+            notifyDataSetChanged()
         }
 
-        return filter
+        @SuppressLint("DefaultLocale")
+        override fun performFiltering(constraint : CharSequence): Filter.FilterResults {
+            val results = Filter.FilterResults()
+
+            val constraint = constraint.toString().toLowerCase()
+            val filteredMovies = filteredMoviesList.indices
+                    .map { filteredMoviesList[it] }
+                    .filterTo(ArrayList<Movie>()) {
+                        it.artistName!!.toLowerCase().contains(constraint) ||
+                        it.trackName!!.toLowerCase().contains(constraint)
+                    }
+            results.count = filteredMovies.size
+            results.values = filteredMovies
+
+            return results
+        }
     }
 }

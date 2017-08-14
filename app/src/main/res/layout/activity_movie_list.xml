@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/screen_padding"
-	android:background="@color/black"
-    tools:context=".MovieListActivity" >
+	android:background="@color/gray_background"
+    tools:context=".view.MovieListActivity" >
 
     <EditText 
         android:id="@+id/searchBox"
@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:lines="1"
+		android:textColor="@color/black"
         android:hint="@string/activity_search_box_hint"/>
 
 	<android.support.v7.widget.RecyclerView
