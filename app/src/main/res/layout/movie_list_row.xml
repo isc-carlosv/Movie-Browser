@@ -1,54 +1,54 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:padding="10dp"
-    tools:context=".MovieListActivity" >
+    tools:context=".view.MovieListActivity" >
 
 	<ImageView 
-	    android:id="@+id/album_cover"
-	    android:layout_width="60dp"
-	    android:layout_height="60dp"
-	    android:layout_alignParentLeft="true"
-	    android:layout_centerVertical="true"/>
+	    android:id="@+id/artwork"
+	    android:layout_width="80dp"
+	    android:layout_height="100dp"
+		android:layout_alignParentStart="true"
+	    android:layout_centerVertical="true"
+		tools:ignore="contentDescription"/>
 	
 	<ProgressBar 
-	    android:id="@+id/progress_bar" 
+	    android:id="@+id/progressBar"
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
-	    android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
 	    android:layout_centerVertical="true"
-	    android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
 	    android:indeterminate="true"
 	    style="@android:style/Widget.ProgressBar"
 		android:visibility="gone"/>
 	
 	<TextView 
-	    android:id="@+id/movie_price"
+	    android:id="@+id/movieName"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:layout_alignParentRight="true"
-	    android:layout_centerVertical="true"
-	    android:layout_marginLeft="10dp"/>
-	
-	<TextView 
-	    android:id="@+id/movie_title"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_toRightOf="@+id/album_cover"
-	    android:layout_toLeftOf="@+id/movie_price"
-	    android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/artwork"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/black"
 	    style="@style/MovieNameFont"/>
 
 	<TextView 
-	    android:id="@+id/movie_artist"
+	    android:id="@+id/movieArtist"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:layout_toRightOf="@+id/album_cover"
-	    android:layout_toLeftOf="@+id/movie_price"
-	    android:layout_below="@+id/movie_title"
-	    android:layout_marginLeft="10dp"/>
-		
+        android:layout_toEndOf="@+id/artwork"
+	    android:layout_below="@+id/movieName"
+        android:textColor="@color/gray_text"
+        android:layout_marginStart="8dp"/>
 
+	<TextView
+		android:id="@+id/moviePrice"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_toEndOf="@+id/artwork"
+		android:layout_below="@id/movieArtist"
+        android:textColor="@color/gray_text"
+		android:layout_marginStart="8dp"/>
 
 </RelativeLayout>
